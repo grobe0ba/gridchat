@@ -1,0 +1,19 @@
+#!/bin/awk -f
+
+BEGIN { FIRST=1 }
+
+/^.* → / {
+	FS="→"
+	NICK=$1
+	NICKLEN=length($1)+2
+	NICKFMT="%"NICKLEN"s %s\n"
+}
+
+{
+	if(FIRST) {
+		print $0
+		FIRST=0
+	} else {
+		printf(NICKFMT, "", $0)
+	}
+}
