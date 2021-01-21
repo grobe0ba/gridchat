@@ -38,6 +38,9 @@ while (~ $1 -*){
 	case -j
 		channel = $2
 		shift 2
+	case -s
+		chatsrv = $2
+		shift 2
 	case *
 		echo bad flag $1 '-n NICK -j CHANNEL'
 		shift
@@ -45,9 +48,9 @@ while (~ $1 -*){
 }
 if(! ~ $1 '')
 	chatsrv=$1
-if(! test -e /n/$chatsrv/chat)
+if(! test -e /n/$chatsrv/ctl)
 	mount /srv/$chatsrv /n/$chatsrv
-if(! test -e /n/$chatsrv/chat){
+if(! test -e /n/$chatsrv/ctl){
 	echo 'no chat service named $chatsrv found' >[1=2]
 	exit no.chat
 }
@@ -61,13 +64,7 @@ while(~ $#name 0){
 }
 echo JOIN $name to $channel >>/n/$chatsrv/$channel
 
-fn docat {
-	cat /n/$chatsrv/$channel | while(line=`{read}) {
-		echo $line | fmt | chat-post-fmt
-	}
-}
-
-docat &
+chat-fmt </n/$chatsrv/$channel &
 catkill=$apid
 
 while(talk=`{read}){
@@ -84,10 +81,10 @@ while(talk=`{read}){
 	case /j
 		if (~ $talk(2) '')
 			echo must specify a channel to join
-		if not if(test -e /n/chat/$talk(2)){
+		if not if(test -e /n/$chatsrv/$talk(2)){
 			close
 			channel=$talk(2)
-			cat /n/chat/$channel &
+			cat /n/$chatsrv/$channel &
 			catkill=$apid
 			echo JOIN $name to $channel >>/n/$chatsrv/$channel
 		}
@@ -108,7 +105,7 @@ while(talk=`{read}){
 #		ts=`{echo '('^$ts(4)^')'}
 		if(! ~ $talk ''){
 			line=`{echo $name '→ ' $talk}
-			echo $line >>/n/chat/$channel
+			echo $line >>/n/$chatsrv/$channel
 		}
 	}
 }
