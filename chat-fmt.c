@@ -52,6 +52,7 @@ int main(void) {
 			tok = nil;
 		}
 		Bwrite(o, "\n", 1);
+		Bflush(o);
 	}
 	Bterm(i);
 	Bterm(o);
