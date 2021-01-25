@@ -64,7 +64,7 @@ while(~ $#name 0){
 }
 echo JOIN $name to $channel >>/n/$chatsrv/$channel
 
-chat-fmt </n/$chatsrv/$channel &
+$home/bin/$objtype/chat-fmt </n/$chatsrv/$channel &
 catkill=$apid
 
 while(talk=`{read}){
